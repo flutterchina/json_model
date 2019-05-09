@@ -1,0 +1,13 @@
+name: example
+description: Gernerate model class from Json files.
+version: 0.0.1
+author: wendux <824783146@qq.com>
+homepage:
+
+environment:
+  sdk: ">=2.1.0 <3.0.0"
+
+dev_dependencies:
+  json_model:
+    path: ../
+  json_serializable: ^2.0.0
