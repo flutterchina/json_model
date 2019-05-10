@@ -23,7 +23,7 @@ dev_dependencies:
 
 File: `jsons/user.json`
 
-```json
+```javascript
 {
   "name":"wendux",
   "father":"$user", //Other class model 
