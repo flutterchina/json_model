@@ -51,7 +51,7 @@ packages:
     source: hosted
     version: "1.0.4"
   build_runner:
-    dependency: "direct dev"
+    dependency: transitive
     description:
       name: build_runner
       url: "https://pub.dartlang.org"
@@ -212,7 +212,7 @@ packages:
     source: path
     version: "0.0.1"
   json_serializable:
-    dependency: "direct dev"
+    dependency: transitive
     description:
       name: json_serializable
       url: "https://pub.dartlang.org"

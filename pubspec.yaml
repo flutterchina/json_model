@@ -1,6 +1,6 @@
 name: json_model
-description: Gernerate model class from Json file.
-version: 0.0.1
+description: Gernerating Dart model class from Json file.
+version: 0.0.2
 author: wendux <824783146@qq.com>
 homepage: https://github.com/flutterchina/json_model
 
@@ -9,7 +9,14 @@ environment:
 
 dependencies:
   args: ^1.5.1
+  build: ">=1.0.0 <1.2.0"
+  glob: ^1.1.0
+  logging: ^0.11.2
+  io: ^0.3.0
+  build_resolvers: ^1.0.0
+  build_runner_core: ^3.0.0
   build_runner: ^1.0.0
+  json_annotation: ^2.2.0
   json_serializable: ^2.0.0
   path: ^1.6.2
 dev_dependencies:

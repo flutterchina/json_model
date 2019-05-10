@@ -10,4 +10,3 @@ environment:
 dev_dependencies:
   json_model:
     path: ../
-  json_serializable: ^2.0.0

@@ -1,20 +1,23 @@
-# json_model
 
-Gernerate model class from Json files.
+Language: [English](README.md) | [中文简体](README-ZH.md)
+
+
+# json_model [![Pub](https://img.shields.io/pub/v/json_model.svg?style=flat-square)](https://pub.dartlang.org/packages/json_model)
+
+Gernerating Dart model class from Json file.
 
 ## Installing
 
 ```yaml
 dev_dependencies:
   json_model: #latest version
-  json_serializable: ^2.0.0
 ```
 
 ## Getting Started
 
 1. Create a "jsons" directory in the root of your project;
 2. Create a Json file under "jsons" dir ;
-3. Run `pub run json_model` or `flutter packages pub run json_model`
+3. Run `flutter packages pub run json_model` (in Flutter) or  `pub run json_model`  (in Dart VM)
 
 ## Examples
 
@@ -52,9 +55,9 @@ class User {
 
 ```
 
-### Plain field
+### @JsonKey
 
-You can use metal syntax to generate "plain" field, for example:
+You can also use “@JsonKey” annotation from [json_annotation](https://pub.dev/packages/json_annotation) package.
 
 ```json
 {
@@ -87,7 +90,7 @@ class User {
 
 Test:
 
-``` dart
+```dart
 import 'models/index.dart';
 
 void main() {
@@ -98,9 +101,9 @@ void main() {
 
 ### @Import 
 
-```json
+```javascript
 {
-  "@import":"test_dir/profile.dart",
+  "@import":"test_dir/profile.dart", //import file for model class
   "@JsonKey(ignore: true) Profile":"profile",
   "name":"wendux",
   "age":20
@@ -111,7 +114,7 @@ The generated class:
 
 ```dart
 import 'package:json_annotation/json_annotation.dart';
-import 'test_dir/profile.dart';  // import 
+import 'test_dir/profile.dart';  // import file
 part 'user.g.dart';
 
 @JsonSerializable()
@@ -127,7 +130,9 @@ class User {
 }
 ```
 
-## Config
+For completed examples see [here](https://github.com/flutterchina/json_model/tree/master/example) .
+
+##  Command arguments
 
 The default json source file directory is ` project_root/jsons`;  you can custom the src file directory by `src` argument, for example:
 
@@ -139,5 +144,18 @@ You can also custom the dist directory by `dist` argument:
 
 ```shell
 pub run json_model src=json_files  dist=data # will save in lib/data dir
+```
+
+> The `dist` root is `lib`
+
+## Run by code
+
+If you want to run json_model by code instead command line, you can:
+
+```dart
+import 'package:json_model/json_model.dart';
+void main() {
+  run(['src=jsons']);  //run
+}
 ```
 
