@@ -13,7 +13,7 @@ dev_dependencies:
   json_model: #最新版本
 ```
 
-## Getting Started
+## 使用
 
 1. 在工程根目录下创建一个名为 "jsons" 的目录;
 2. 创建或拷贝Json文件到"jsons" 目录中 ;
