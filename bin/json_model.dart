@@ -15,7 +15,9 @@ void main(List<String> args) {
   parser.addOption('dist', defaultsTo: 'lib/models', callback: (v) => dist = v, help: "Specify the dist directory.");
   parser.addOption('tag', defaultsTo: '\$', callback: (v) => tag = v, help: "Specify the tag ");
   parser.parse(args);
+  print(args);
   if(walk(src, dist,tag)) {
+    //br.run(['clean']);
     br.run(['build', '--delete-conflicting-outputs']);
   }
 }

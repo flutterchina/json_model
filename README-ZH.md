@@ -11,6 +11,8 @@
 ```yaml
 dev_dependencies: 
   json_model: #最新版本
+  build_runner: ^1.0.0
+  json_serializable: ^2.0.0
 ```
 
 ## 使用
