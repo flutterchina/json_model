@@ -66,7 +66,7 @@ bool walk(String srcDir, String distDir, String tag ) {
         }
         attrs.write("    ");
       });
-      String  className=name[0].toUpperCase()+name.substring(1);
+      String className=camelCaseClassName(name);
       var dist=format(tpl,[name,className,className,attrs.toString(),
       className,className,className]);
       var _import=set.join(";\r\n");
@@ -110,14 +110,14 @@ String getType(v,Set<String> set,String current, tag){
       if(type.toLowerCase()!=current&&!isBuiltInType(type)) {
         set.add('import "$type.dart"');
       }
-      return "List<${changeFirstChar(type)}>";
+      return "List<${camelCaseClassName(type)}>";
 
     }else if(v.startsWith(tag)){
       var fileName=changeFirstChar(v.substring(1),false);
       if(fileName.toLowerCase()!=current) {
         set.add('import "$fileName.dart"');
       }
-      return changeFirstChar(fileName);
+      return camelCaseClassName(fileName);
     }else if(v.startsWith("@")){
       return v;
     }
@@ -142,4 +142,11 @@ String format(String fmt, List<Object> params) {
     throw new Exception("Invalid format string: " + m[0].toString());
   }
   return fmt.replaceAllMapped("%s", replace);
+}
+
+///Change file name to camel case class name
+String camelCaseClassName(String name) {
+  final parts=name.split('_');
+  return parts.map(changeFirstChar)
+    .join('');
 }
