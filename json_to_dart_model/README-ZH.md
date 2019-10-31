@@ -1,5 +1,5 @@
 
-语言: [English](README.md) | [中文简体](README-ZH.md)
+语言: [English](https://github.com/yanguoyu/json_model/blob/master/json_to_dart_model/README.md) | [中文简体](https://github.com/yanguoyu/json_model/blob/master/json_to_dart_model/README-ZH.md)
 
 
 # json_to_dart_model [![Pub](https://img.shields.io/pub/v/json_to_dart_model.svg?style=flat-square)](https://pub.dartlang.org/packages/json_to_dart_model)
