@@ -1,4 +1,4 @@
-name: json_model
+name: json_to_dart_model
 description: Gernerating Dart model class from Json file.
 version: 0.0.3
 author: wendux <824783146@qq.com>

@@ -228,10 +228,10 @@ packages:
   json_model:
     dependency: "direct dev"
     description:
-      path: ".."
+      path: "../json_model"
       relative: true
     source: path
-    version: "0.0.2"
+    version: "0.0.3"
   json_serializable:
     dependency: "direct dev"
     description:
