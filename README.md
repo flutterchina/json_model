@@ -6,20 +6,22 @@ Language: [English](README.md) | [中文简体](README-ZH.md)
 
 Gernerating Dart model class from Json file.
 
-## Installing
-
-```yaml
-dev_dependencies:
-  json_model: #latest version
-  build_runner: ^1.0.0
-  json_serializable: ^2.0.0
-```
-
 ## Getting Started
 
-1. Create a "jsons" directory in the root of your project;
-2. Create a Json file under "jsons" dir ;
-3. Run `flutter packages pub run json_model` (in Flutter) or  `pub run json_model`  (in Dart VM)
+1. import dependencies
+```yaml
+dependencies:
+  json_annotation: ^2.2.0
+
+dev_dependencies:
+  json_model: latest
+  build_runner: ^1.0.0
+  json_serializable: ^2.2.0
+```
+2. create json files in lib/model
+3. run
+  1. run `pub run build_runner build` (Dart VM project) or `flutter packages pub run build_runner build`(Flutter), create files once
+  2. run `pub run build_runner watch` (Dart VM project) or `flutter packages pub run build_runner watch`(Flutter中) watch and create files when json files changed
 
 ## Examples
 
@@ -27,137 +29,87 @@ File: `jsons/user.json`
 
 ```javascript
 {
-  "name":"wendux",
-  "father":"$user", //Other class model 
-  "friends":"$[]user", // Array  
-  "keywords":"$[]String", // Array
-  "age":20
+  "@import": ["card.dart", "test_dir/profile.dart"],
+  "profile": {
+    "pre": "@JsonKey(ignore: true)",
+    "type": "Profile"
+  },
+  "loved": {
+    "pre": "@JsonKey(name: '+1')",
+    "type": "int"
+  },
+  "name": "String",
+  "father": "UserInfo",
+  "friends": "List<UserInfo>",
+  "keywords": "List<String>",
+  "bankCards": "List<Card>",
+  "age": "int"
 }
 ```
 
-Run `pub run json_model`, then  you'll see the generated json file under  `lib/models/` dir:
+Run `pub run build_runner build`, then  you'll see the generated json file.
 
 ```dart
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// **************************************************************************
+// JsonModel Builder
+// **
 import 'package:json_annotation/json_annotation.dart';
-part 'user.g.dart';
+import 'card.dart';
+import 'test_dir/profile.dart';
+part 'user_info.g.dart';
 
 @JsonSerializable()
-class User {
-    User();
-    
-    String name;
-    User father;
-    List<User> friends;
-    List<String> keywords;
-    num age;
-    
-    factory User.fromJson(Map<String,dynamic> json) => _$UserFromJson(json);
-    Map<String, dynamic> toJson() => _$UserToJson(this);
+class UserInfo  {
+  UserInfo();
+
+  @JsonKey(ignore: true)
+  Profile profile;
+
+  @JsonKey(name: '+1')
+  int loved;
+
+  String name;
+
+  UserInfo father;
+
+  List<UserInfo> friends;
+
+  List<String> keywords;
+
+  List<Card> bankCards;
+
+  int age;
+
+
+  factory UserInfo.fromJson(Map<String,dynamic> json) => _$UserInfoFromJson(json);
+
+  Map<String, dynamic> toJson() => _$UserInfoToJson(this);
 }
 
 ```
 
-### @JsonKey
+### Json Fields Description
 
-You can also use “@JsonKey” annotation from [json_annotation](https://pub.dev/packages/json_annotation) package.
+1. @import Classes that need to be imported, this value support String or List.
+2. @with Use the with keyword to expand the current class
+3. @extends Use the extends keyword for current inheritance
+4. other fileds
+  value's type is String，value is the field's type
+  value's type is Map，value["pre"] is json_serializable's annotations、value["type"] is current field's type
 
-```json
-{
-  "@JsonKey(ignore: true) dynamic":"md",
-  "@JsonKey(name: '+1') int": "loved",
-  "name":"wendux",
-  "age":20
-}
-```
+### Others Description
+1. This lib library only generates .dart files from json files, Support for all json_serializable annotations
+2. By default, the json file in lib/model will exchange. If you need to exchange the files in other directories,
+  set build.yml, and set the converted directory by include and exclude.
+``` yaml
+targets:
+  $default:
+    builders:
+      json_model|jsonBuilder:
+        generate_for:
+          include:
+            - lib/test_build_yml/**
 
-The generated class is:
-
-```dart
-import 'package:json_annotation/json_annotation.dart';
-part 'user.g.dart';
-
-@JsonSerializable()
-class User {
-    User();
-
-    @JsonKey(ignore: true) dynamic md;
-    @JsonKey(name: '+1') int loved;
-    String name;
-    num age;
-    
-    factory User.fromJson(Map<String,dynamic> json) => _$UserFromJson(json);
-    Map<String, dynamic> toJson() => _$UserToJson(this);
-}
-```
-
-Test:
-
-```dart
-import 'models/index.dart';
-
-void main() {
-  var u = User.fromJson({"name": "Jack", "age": 16, "+1": 20});
-  print(u.loved); // 20
-}
-```
-
-### @Import 
-
-```javascript
-{
-  "@import":"test_dir/profile.dart", //import file for model class
-  "@JsonKey(ignore: true) Profile":"profile",
-  "name":"wendux",
-  "age":20
-}
-```
-
-The generated class:
-
-```dart
-import 'package:json_annotation/json_annotation.dart';
-import 'test_dir/profile.dart';  // import file
-part 'user.g.dart';
-
-@JsonSerializable()
-class User {
-    User();
-
-    @JsonKey(ignore: true) Profile profile; //file
-    String name;
-    num age;
-    
-    factory User.fromJson(Map<String,dynamic> json) => _$UserFromJson(json);
-    Map<String, dynamic> toJson() => _$UserToJson(this);
-}
-```
-
-For completed examples see [here](https://github.com/flutterchina/json_model/tree/master/example) .
-
-##  Command arguments
-
-The default json source file directory is ` project_root/jsons`;  you can custom the src file directory by `src` argument, for example:
-
-```shell
-pub run json_model src=json_files 
-```
-
-You can also custom the dist directory by `dist` argument:
-
-```shell
-pub run json_model src=json_files  dist=data # will save in lib/data dir
-```
-
-> The `dist` root is `lib`
-
-## Run by code
-
-If you want to run json_model by code instead command line, you can:
-
-```dart
-import 'package:json_model/json_model.dart';
-void main() {
-  run(['src=jsons']);  //run
-}
 ```
 

@@ -6,20 +6,21 @@
 
 只用一行命令，直接将Json文件转为Dart model类。
 
-## 安装
-
-```yaml
-dev_dependencies: 
-  json_model: #最新版本
-  build_runner: ^1.0.0
-  json_serializable: ^2.0.0
-```
-
 ## 使用
 
-1. 在工程根目录下创建一个名为 "jsons" 的目录;
-2. 创建或拷贝Json文件到"jsons" 目录中 ;
-3. 运行 `pub run json_model` (Dart VM工程)or `flutter packages pub run json_model`(Flutter中) 命令生成Dart model类，生成的文件默认在"lib/models"目录下
+1. 引入依赖
+```yaml
+dependencies:
+  json_annotation: ^2.2.0
+
+dev_dependencies:
+  json_model: latest
+  build_runner: ^1.0.0
+  json_serializable: ^2.2.0
+```
+2. 在 lib/model 中创建 json 文件;
+3. 运行 `pub run build_runner build` (Dart VM工程)or `flutter packages pub run build_runner build`(Flutter中) 命令生成Dart model类，生成的文件与json在同一目录
+4. 或者运行 `pub run build_runner watch` (Dart VM工程)or `flutter packages pub run build_runner watch`(Flutter中) 命令生成Dart model类，watch时会实时监控json文件的修改，实时生成.dart
 
 ## 例子
 
@@ -27,141 +28,85 @@ Json文件: `jsons/user.json`
 
 ```javascript
 {
-  "name":"wendux",
-  "father":"$user", //可以通过"$"符号引用其它model类
-  "friends":"$[]user", // 可以通过"$[]"来引用数组
-  "keywords":"$[]String", // 同上
-  "age":20
+  "@import": ["card.dart", "test_dir/profile.dart"],
+  "profile": {
+    "pre": "@JsonKey(ignore: true)",
+    "type": "Profile"
+  },
+  "loved": {
+    "pre": "@JsonKey(name: '+1')",
+    "type": "int"
+  },
+  "name": "String",
+  "father": "UserInfo",
+  "friends": "List<UserInfo>",
+  "keywords": "List<String>",
+  "bankCards": "List<Card>",
+  "age": "int"
 }
 ```
 
 生成的Dart model类:
 
 ```dart
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// **************************************************************************
+// JsonModel Builder
+// **
 import 'package:json_annotation/json_annotation.dart';
-part 'user.g.dart';
+import 'card.dart';
+import 'test_dir/profile.dart';
+part 'user_info.g.dart';
 
 @JsonSerializable()
-class User {
-    User();
-    
-    String name;
-    User father;
-    List<User> friends;
-    List<String> keywords;
-    num age;
-    
-    factory User.fromJson(Map<String,dynamic> json) => _$UserFromJson(json);
-    Map<String, dynamic> toJson() => _$UserToJson(this);
+class UserInfo  {
+  UserInfo();
+
+  @JsonKey(ignore: true)
+  Profile profile;
+
+  @JsonKey(name: '+1')
+  int loved;
+
+  String name;
+
+  UserInfo father;
+
+  List<UserInfo> friends;
+
+  List<String> keywords;
+
+  List<Card> bankCards;
+
+  int age;
+
+
+  factory UserInfo.fromJson(Map<String,dynamic> json) => _$UserInfoFromJson(json);
+
+  Map<String, dynamic> toJson() => _$UserInfoToJson(this);
 }
 
 ```
 
-### @JsonKey
+### json 字段说明
 
-您也可以使用[json_annotation](https://pub.dev/packages/json_annotation)包中的“@JsonKey”标注特定的字段。
+1. @import 此类需要 import 的类，可以为一个或多个，当 value 为 String：默认为一个依赖；当 value 为 List：默认为多个依赖
+2. @with 使用 with 关键词为 当前类扩展
+3. @extends 使用 extends 关键词 为当前继承
+4. 其余字段
+  如果 value 为 String，则认为 value 为此字段的类型
+  如果 value 为 Map，则 Map 里面 的 pre 为 json_serializable 支持的注解、type 为此字段的类型
 
-这个功能在特定场景下非常有用，比如Json文件中有一个字段名为"+1"，由于在转成Dart类后，字段名会被当做变量名，但是在Dart中变量名不能包含“+”，我们可以通过“@JsonKey”来映射变量名；
+### 说明
+1. 本 lib 库仅根据 json 文件生成 .dart 文件，后续的生成 .g.dart 依赖 json_serializable 和 json_annotation，支持所有的json_serializable注解
+2. 默认读取lib/model 中的json文件，如果需要读取其他目录下的文件，请单独设置 build.yml, 通过include 和 exclude 设置转换的目录
+``` yaml
+targets:
+  $default:
+    builders:
+      json_model|jsonBuilder:
+        generate_for:
+          include:
+            - lib/test_build_yml/**
 
-```javascript
-{
-  "@JsonKey(ignore: true) dynamic":"md",
-  "@JsonKey(name: '+1') int": "loved", //将“+1”映射为“loved”
-  "name":"wendux",
-  "age":20
-}
 ```
-
-生成文件如下:
-
-```dart
-import 'package:json_annotation/json_annotation.dart';
-part 'user.g.dart';
-
-@JsonSerializable()
-class User {
-    User();
-    @JsonKey(name: '+1') int loved;
-    String name;
-    num age;
-    
-    factory User.fromJson(Map<String,dynamic> json) => _$UserFromJson(json);
-    Map<String, dynamic> toJson() => _$UserToJson(this);
-}
-```
-
-测试:
-
-```dart
-import 'models/index.dart';
-
-void main() {
-  var u = User.fromJson({"name": "Jack", "age": 16, "+1": 20});
-  print(u.loved); // 20
-}
-```
-
-> 关于 `@JsonKey`标注的详细内容请参考[json_annotation](https://pub.dev/packages/json_annotation) 包；
-
-### @Import 
-
-另外，提供了一个`@Import `指令，该指令可以在生成的Dart类中导入指定的文件：
-
-```json
-{
-  "@import":"test_dir/profile.dart",
-  "@JsonKey(ignore: true) Profile":"profile",
-  "name":"wendux",
-  "age":20
-}
-```
-
-生成的Dart类:
-
-```dart
-import 'package:json_annotation/json_annotation.dart';
-import 'test_dir/profile.dart';  // 指令生效
-part 'user.g.dart';
-
-@JsonSerializable()
-class User {
-    User();
-
-    @JsonKey(ignore: true) Profile profile; //file
-    String name;
-    num age;
-    
-    factory User.fromJson(Map<String,dynamic> json) => _$UserFromJson(json);
-    Map<String, dynamic> toJson() => _$UserToJson(this);
-}
-```
-
-更完整的示例请移步[这里](https://github.com/flutterchina/json_model/tree/master/example) .
-
-##  命令参数
-
-默认的源json文件目录为根目录下名为 "json" 的目录；可以通过 `src` 参数自定义源json文件目录，例如:
-
-```shell
-pub run json_model src=json_files 
-```
-
-默认的生成目录为"lib/models"，同样也可以通过`dist` 参数来自定义输出目录:
-
-```shell
-pub run json_model src=json_files  dist=data # 输出目录为 lib/data
-```
-
-> 注意，dist会默认已lib为根目录。
-
-## 代码调用
-
-如果您正在开发一个工具，想在代码中使用json_model，此时便不能通过命令行来调用json_model，这是你可以通过代码调用：
-
-```dart
-import 'package:json_model/json_model.dart';
-void main() {
-  run(['src=jsons']);  //run方法为json_model暴露的方法；
-}
-```
-

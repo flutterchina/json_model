@@ -1,6 +1,6 @@
 name: json_model
 description: Gernerating Dart model class from Json file.
-version: 0.0.2
+version: 0.0.3
 author: wendux <824783146@qq.com>
 homepage: https://github.com/flutterchina/json_model
 
