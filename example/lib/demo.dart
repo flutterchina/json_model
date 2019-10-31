@@ -1,8 +1,6 @@
-//import 'package:json_model/json_model.dart';
-import 'models/index.dart';
+import 'model/user_info.dart';
 
 void main() {
-  //run(['src=jsons']);
-  var u = User.fromJson({"name": "Jack", "age": 16, "+1": 20});
+  var u = UserInfo.fromJson({"name": "Jack", "age": 16, "+1": 20});
   print(u.loved);
 }

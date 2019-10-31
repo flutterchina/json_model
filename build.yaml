@@ -1,0 +1,14 @@
+builders:
+  
+  jsonBuilder:
+    import: "package:json_model/builder.dart"
+    builder_factories: ["jsonBuilder"]
+    build_extensions: {".json": ["**.dart"]}
+    build_to: source
+    auto_apply: root_package
+    runs_before: ["json_serializable|json_serializable"]
+    defaults:
+      generate_for:
+        # Only apply files in the lib/model_jsons directory
+        include:
+        - lib/model/**

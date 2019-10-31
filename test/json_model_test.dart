@@ -1,7 +1,9 @@
 import 'package:test/test.dart';
-import 'package:json_model/json_model.dart';
+import 'package:json_model/create_template_class.dart';
 
 void main() {
-  test('adds one to input values', () {
+  test('pascalClassName', () {
+    CreateTemplateClass createTemplateClass = CreateTemplateClass();
+    expect(createTemplateClass.pascalClassName('file_name-haha'), 'FileNameHaha');
   });
 }

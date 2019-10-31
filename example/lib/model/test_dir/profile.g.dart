@@ -9,7 +9,7 @@ part of 'profile.dart';
 Profile _$ProfileFromJson(Map<String, dynamic> json) {
   return Profile()
     ..name = json['name'] as String
-    ..age = json['age'] as num
+    ..age = json['age'] as int
     ..male = json['male'] as bool;
 }
 
