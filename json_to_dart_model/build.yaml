@@ -1,7 +1,7 @@
 builders:
   
   jsonBuilder:
-    import: "package:json_model/builder.dart"
+    import: "package:json_to_dart_model/builder.dart"
     builder_factories: ["jsonBuilder"]
     build_extensions: {".json": ["**.dart"]}
     build_to: source

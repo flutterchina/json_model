@@ -225,13 +225,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.3.0"
-  json_model:
-    dependency: "direct dev"
-    description:
-      path: "../json_model"
-      relative: true
-    source: path
-    version: "0.0.3"
   json_serializable:
     dependency: "direct dev"
     description:
@@ -239,6 +232,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.3.0"
+  json_to_dart_model:
+    dependency: "direct dev"
+    description:
+      path: "../json_to_dart_model"
+      relative: true
+    source: path
+    version: "0.0.3"
   kernel:
     dependency: transitive
     description:

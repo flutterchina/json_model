@@ -2,7 +2,7 @@
 Language: [English](README.md) | [中文简体](README-ZH.md)
 
 
-# json_model [![Pub](https://img.shields.io/pub/v/json_model.svg?style=flat-square)](https://pub.dartlang.org/packages/json_model)
+# json_to_dart_model [![Pub](https://img.shields.io/pub/v/json_to_dart_model.svg?style=flat-square)](https://pub.dartlang.org/packages/json_to_dart_model)
 
 Gernerating Dart model class from Json file.
 
@@ -14,9 +14,9 @@ dependencies:
   json_annotation: ^2.2.0
 
 dev_dependencies:
-  json_model: latest
   build_runner: ^1.0.0
   json_serializable: ^2.2.0
+  json_to_dart_model: latest
 ```
 2. create json files in lib/model
 3. run
@@ -106,7 +106,7 @@ class UserInfo  {
 targets:
   $default:
     builders:
-      json_model|jsonBuilder:
+      json_to_dart_model|jsonBuilder:
         generate_for:
           include:
             - lib/test_build_yml/**
