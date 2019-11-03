@@ -1,0 +1,10 @@
+{
+  "age": "int",
+  "firstName": {
+    "pre": "@JsonKey(name: 'first_name', nullable: false)",
+    "type": "String"
+  },
+  "secondName": "String",
+  "listInt": "List <int>",
+  "listStr": "List <String>"
+}

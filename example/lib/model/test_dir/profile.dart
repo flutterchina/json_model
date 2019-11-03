@@ -8,13 +8,15 @@ part 'profile.g.dart';
 
 @JsonSerializable()
 class Profile  {
-  Profile();
+  Profile({
+    this.name,this.age,this.male
+  });
 
-  String name;
+  final String name;
 
-  int age;
+  final int age;
 
-  bool male;
+  final bool male;
 
 
   factory Profile.fromJson(Map<String,dynamic> json) => _$ProfileFromJson(json);

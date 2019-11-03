@@ -4,9 +4,9 @@ typedef String HandlerFun(dynamic v);
 
 class CreateTemplateClass {
 
-  final withPrefiex = '@with';
-  final extendsPrefix = '@extends';
-  final importPrefix = '@import';
+  final String withPrefiex = '@with';
+  final String extendsPrefix = '@extends';
+  final String importPrefix = '@import';
   Map<String, HandlerFun> _typeHandlers;
 
   CreateTemplateClass() {
@@ -32,7 +32,7 @@ class CreateTemplateClass {
     if (v is String) {
       return (
             """
-  $v $key;
+  final $v $key;
 
 """
       );
@@ -41,7 +41,7 @@ class CreateTemplateClass {
       return (
             """
   ${fieldInfo['pre'] ?? ''}
-  ${fieldInfo['type']} $key;
+  final ${fieldInfo['type']} $key;
 
 """
       );
@@ -55,6 +55,7 @@ class CreateTemplateClass {
     String attrs,
     String extendClass,
     String withClass,
+    List<String> fieldNames,
   }) {
     return """
 // GENERATED CODE - DO NOT MODIFY BY HAND
@@ -67,7 +68,9 @@ part '$name.g.dart';
 
 @JsonSerializable()
 class $className $extendClass $withClass{
-  $className();
+  $className({
+    ${fieldNames.map((field) => 'this.$field').join(',')}
+  });
 
 $attrs
   factory $className.fromJson(Map<String,dynamic> json) => _\$${className}FromJson(json);
@@ -80,18 +83,19 @@ $attrs
   String createContent(String filePath, Map<String, dynamic> classConfigs) {
     var paths = path.basename(filePath).split(".");
     String name=paths.first;
-    //为了避免重复导入相同的包，我们用Set来保存生成的import语句。
     StringBuffer attrs = StringBuffer();
     var classInfos = {
       withPrefiex: '',
       importPrefix: '',
       extendsPrefix: '',
     };
+    var fieldNames = List<String>();
     classConfigs.forEach((key, v) {
       if (_typeHandlers.containsKey(key)) {
         classInfos[key] = _typeHandlers[key](v);
       } else {
         attrs.write(handlerFiled(key, v));
+        fieldNames.add(key);
       }
     });
     return createDartClass(
@@ -101,6 +105,7 @@ $attrs
       attrs: attrs.toString(),
       extendClass: classInfos[extendsPrefix],
       withClass: classInfos[withPrefiex],
+      fieldNames: fieldNames,
     );
   }
 }

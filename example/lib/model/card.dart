@@ -8,13 +8,15 @@ part 'card.g.dart';
 
 @JsonSerializable()
 class Card  {
-  Card();
+  Card({
+    this.no,this.name,this.hahha
+  });
 
-  int no;
+  final int no;
 
-  String name;
+  final String name;
 
-  String hahha;
+  final String hahha;
 
 
   factory Card.fromJson(Map<String,dynamic> json) => _$CardFromJson(json);

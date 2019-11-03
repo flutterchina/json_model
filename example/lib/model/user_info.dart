@@ -9,25 +9,27 @@ part 'user_info.g.dart';
 
 @JsonSerializable()
 class UserInfo  {
-  UserInfo();
+  UserInfo({
+    this.profile,this.loved,this.name,this.father,this.friends,this.keywords,this.bankCards,this.age
+  });
 
   @JsonKey(ignore: true)
-  Profile profile;
+  final Profile profile;
 
   @JsonKey(name: '+1')
-  int loved;
+  final int loved;
 
-  String name;
+  final String name;
 
-  UserInfo father;
+  final UserInfo father;
 
-  List<UserInfo> friends;
+  final List<UserInfo> friends;
 
-  List<String> keywords;
+  final List<String> keywords;
 
-  List<Card> bankCards;
+  final List<Card> bankCards;
 
-  int age;
+  final int age;
 
 
   factory UserInfo.fromJson(Map<String,dynamic> json) => _$UserInfoFromJson(json);
