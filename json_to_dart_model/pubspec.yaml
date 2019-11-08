@@ -1,0 +1,16 @@
+name: json_to_dart_model
+description: Gernerating Dart model class from Json file.
+version: 0.0.8
+author: wendux <824783146@qq.com>
+homepage: https://github.com/yanguoyu/json_model
+
+environment:
+  sdk: ">=2.1.0 <3.0.0"
+
+dependencies:
+  build: ">=1.0.0 <1.2.0"
+  path: ^1.6.2
+
+dev_dependencies:
+  test: ^1.5.1
+  build_runner: ^1.3.1

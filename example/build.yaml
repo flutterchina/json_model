@@ -1,0 +1,8 @@
+targets:
+  $default:
+    builders:
+      json_to_dart_model|jsonBuilder:
+        generate_for:
+          include:
+            - lib/model/**
+

@@ -1,0 +1,17 @@
+{
+  "@import": ["card.dart", "test_dir/profile.dart"],
+  "profile": {
+    "pre": "@JsonKey(ignore: true)",
+    "type": "Profile"
+  },
+  "loved": {
+    "pre": "@JsonKey(name: '+1')",
+    "type": "int"
+  },
+  "name": "String",
+  "father": "UserInfo",
+  "friends": "List<UserInfo>",
+  "keywords": "List<String>",
+  "bankCards": "List<Card>",
+  "age": "int"
+}

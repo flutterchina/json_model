@@ -1,8 +1,15 @@
-//import 'package:json_model/json_model.dart';
-import 'models/index.dart';
+import 'dart:convert';
+import 'model/person.dart';
+
+String jsonResponse = json.encode({
+  "age":10,
+  "first_name":"yang",
+  "secondName": "yun",
+  "listInt": [1, 2, 3],
+  "listString": ["a", "b", "c"]
+});
 
 void main() {
-  //run(['src=jsons']);
-  var u = User.fromJson({"name": "Jack", "age": 16, "+1": 20});
-  print(u.loved);
+  var person = Person.fromJson(json.decode(jsonResponse) as Map<String, dynamic>);
+  print("${person.firstName} ${person.secondName}'s age is ${person.age}; ${person.listInt}; ${person.listStr}");
 }
