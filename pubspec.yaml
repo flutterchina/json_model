@@ -5,19 +5,19 @@ author: wendux <824783146@qq.com>
 homepage: https://github.com/flutterchina/json_model
 
 environment:
-  sdk: ">=2.1.0 <3.0.0"
+  sdk: ">=2.7.0 <3.0.0"
 
 dependencies:
   args: ^1.5.1
-  build: ">=1.0.0 <1.2.0"
+  build: ^1.6.2
   glob: ^1.1.0
   logging: ^0.11.2
   io: ^0.3.0
   build_resolvers: ^1.0.0
-  build_runner_core: ^3.0.0
-  build_runner: ^1.0.0
-  json_annotation: ^2.2.0
-  json_serializable: ^2.0.0
+  build_runner_core: ^6.1.7
+  build_runner: ^1.11.1
+  json_annotation: ^3.1.1
+  json_serializable: ^3.5.1
   path: ^1.6.2
 dev_dependencies:
   test: ^1.5.1
