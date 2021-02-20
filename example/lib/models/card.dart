@@ -8,6 +8,7 @@ class Card {
 
     String no;
     String name;
+    num age;
     
     factory Card.fromJson(Map<String,dynamic> json) => _$CardFromJson(json);
     Map<String, dynamic> toJson() => _$CardToJson(this);
