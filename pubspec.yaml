@@ -8,16 +8,16 @@ environment:
   sdk: ">=2.1.0 <3.0.0"
 
 dependencies:
-  args: ^1.5.1
-  build: ">=1.0.0 <1.2.0"
-  glob: ^1.1.0
-  logging: ^0.11.2
-  io: ^0.3.0
-  build_resolvers: ^1.0.0
-  build_runner_core: ^3.0.0
-  build_runner: ^1.0.0
-  json_annotation: ^2.2.0
-  json_serializable: ^2.0.0
+  args: ^2.2.0
+  build: ^2.0.3
+  glob: ^2.0.1
+  logging: ^1.0.1
+  io: ^1.0.3
+  build_resolvers: ^2.0.4
+  build_runner_core: ^7.0.1
+  build_runner: ^2.0.6
+  json_annotation: ^4.1.0
+  json_serializable: ^5.0.0
   path: ^1.6.2
 dev_dependencies:
   test: ^1.5.1

@@ -7,6 +7,7 @@ import 'dart:io';
 
 import 'package:args/args.dart';
 import 'package:args/command_runner.dart';
+import 'package:build_runner_core/build_runner_core.dart';
 import 'package:io/ansi.dart';
 import 'package:io/io.dart';
 import 'package:logging/logging.dart';
@@ -18,11 +19,11 @@ import 'package:build_runner/src/logging/std_io_logging.dart';
 import 'src/commands/clean.dart';
 import 'src/commands/generate_build_script.dart';
 
-Future<void> run(List<String> args) async {
+Future<void> run(List<String> args, PackageGraph packageGraph) async {
   // Use the actual command runner to parse the args and immediately print the
   // usage information if there is no command provided or the help command was
   // explicitly invoked.
-  var commandRunner = BuildCommandRunner([]);
+  var commandRunner = BuildCommandRunner([], packageGraph);
   var localCommands = [CleanCommand(), GenerateBuildScript()];
   var localCommandNames = localCommands.map((c) => c.name).toSet();
   localCommands.forEach(commandRunner.addCommand);
@@ -41,8 +42,7 @@ Future<void> run(List<String> args) async {
   var commandName = parsedArgs.command?.name;
 
   if (parsedArgs.rest.isNotEmpty) {
-    print(
-        yellow.wrap('Could not find a command named "${parsedArgs.rest[0]}".'));
+    print(yellow.wrap('Could not find a command named "${parsedArgs.rest[0]}".'));
     print('');
     print(commandRunner.usageWithoutDescription);
     exitCode = ExitCode.usage.code;

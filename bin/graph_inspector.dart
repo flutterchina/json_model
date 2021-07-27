@@ -50,7 +50,7 @@ Future<void> main(List<String> args) async {
   stdout.writeln('Loading asset graph at ${assetGraphFile.path}...');
 
   assetGraph = AssetGraph.deserialize(assetGraphFile.readAsBytesSync());
-  packageGraph = PackageGraph.forThisPackage();
+  PackageGraph.forThisPackage().then((value) => packageGraph = value);
 
   var commandRunner = CommandRunner<bool>(
       '', 'A tool for inspecting the AssetGraph for your build')

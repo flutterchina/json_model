@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:args/args.dart';
+import 'package:build_runner_core/build_runner_core.dart';
 import 'package:path/path.dart' as path;
 import 'build_runner.dart' as br;
 
@@ -16,7 +17,7 @@ void run(List<String> args) {
   parser.addOption('tag', defaultsTo: '\$', callback: (v) => tag = v, help: "Specify the tag ");
   parser.parse(args);
   if(walk(src, dist,tag)) {
-    br.run(['build', '--delete-conflicting-outputs']);
+    PackageGraph.forThisPackage().then((value) => br.run(['build', '--delete-conflicting-outputs'], value));
   }
 }
 
