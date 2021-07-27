@@ -2,7 +2,7 @@
   "@import": "test_dir/profile.dart",
   "@JsonKey(ignore: true) Profile": "profile",
   "@JsonKey(name: '+1') int": "loved",
-  "name": "wendux",
+  "name!": "wendux",
   "father":"$user",
   "friends":"$[]user",
   "keywords":"$[]String",

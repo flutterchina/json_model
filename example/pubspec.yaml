@@ -5,8 +5,11 @@ author: wendux <824783146@qq.com>
 homepage:
 
 environment:
-  sdk: ">=2.1.0 <3.0.0"
+  sdk: ">=2.12.0 <3.0.0"
 
 dev_dependencies:
   json_model:
     path: ../
+
+  build_runner: ^2.0.0
+  json_serializable: ^4.1.4
