@@ -16,8 +16,8 @@ dependencies:
   build_resolvers: ^2.0.4
   build_runner_core: ^7.0.1
   build_runner: ^2.0.6
-  json_annotation: ^4.1.0
-  json_serializable: ^5.0.0
+  json_annotation: ^4.0.1
+  json_serializable: ^4.1.4
   path: ^1.6.2
 dev_dependencies:
   test: ^1.5.1
