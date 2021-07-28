@@ -5,16 +5,16 @@ part 'user.g.dart';
 
 @JsonSerializable()
 class User {
-  @JsonKey(ignore: true) final Profile? profile;
-  @JsonKey(name: '+1') final int? loved;
-  final String name;
-  final User? father;
-  final List<User>? friends;
-  final List<String>? keywords;
-  final List<Card>? bankCards;
-  final num? age;
+  @JsonKey(ignore: true) Profile? profile;
+  @JsonKey(name: '+1') int? loved;
+  String name;
+  User? father;
+  List<User>? friends;
+  List<String>? keywords;
+  List<Card>? bankCards;
+  num? age;
   
-  User({this.profile, this.loved, required this.name, this.father, this.friends, this.keywords, this.bankCards, this.age});
+  User(this.name);
 
   factory User.fromJson(Map<String,dynamic> json) => _$UserFromJson(json);
 

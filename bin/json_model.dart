@@ -6,26 +6,28 @@ import 'package:path/path.dart' as path;
 import 'build_runner.dart' as br;
 
 const tpl =
-    "import 'package:json_annotation/json_annotation.dart';\n%t\npart '%s.g.dart';\n\n@JsonSerializable()\nclass %s {\n  %s\n  %s({%s});\n\n  factory %s.fromJson(Map<String,dynamic> json) => _\$%sFromJson(json);\n\n  Map<String, dynamic> toJson() => _\$%sToJson(this);\n}\n";
+    "import 'package:json_annotation/json_annotation.dart';\n%t\npart '%s.g.dart';\n\n@JsonSerializable()\nclass %s {\n  %s\n  %s(%s);\n\n  factory %s.fromJson(Map<String,dynamic> json) => _\$%sFromJson(json);\n\n  Map<String, dynamic> toJson() => _\$%sToJson(this);\n}\n";
 
 void main(List<String> args) {
   String src;
   String dist;
   String tag;
+  bool fixed;
   var parser = new ArgParser();
   parser.addOption('src', defaultsTo: './jsons', callback: (v) => src = v, help: "Specify the json directory.");
   parser.addOption('dist', defaultsTo: 'lib/models', callback: (v) => dist = v, help: "Specify the dist directory.");
   parser.addOption('tag', defaultsTo: '\$', callback: (v) => tag = v, help: "Specify the tag ");
+  parser.addOption('fix', defaultsTo: '0', callback: (v) => fixed = ('0' != v), help: "Specify the fixed ");
   parser.parse(args);
   print(args);
-  if (walk(src, dist, tag)) {
+  if (walk(src, dist, tag, fixed)) {
     //br.run(['clean']);
     PackageGraph.forThisPackage().then((value) => br.run(['build', '--delete-conflicting-outputs'], value));
   }
 }
 
 //遍历JSON目录生成模板
-bool walk(String srcDir, String distDir, String tag) {
+bool walk(String srcDir, String distDir, String tag, bool fixed) {
   if (srcDir.endsWith("/")) srcDir = srcDir.substring(0, srcDir.length - 1);
   if (distDir.endsWith("/")) distDir = distDir.substring(0, distDir.length - 1);
   var src = Directory(srcDir);
@@ -62,14 +64,16 @@ bool walk(String srcDir, String distDir, String tag) {
           }
           int spaceLastIndex = key.lastIndexOf(' ');
           attrs.write(key.substring(0, spaceLastIndex) +
-              ' final' +
+              (fixed ? ' final' : '') +
               key.substring(spaceLastIndex, nullEnable ? key.length : key.length - 1) +
               (nullEnable ? '?' : ''));
           attrs.write(" ");
           attrs.write(v);
           attrs.writeln(";");
         } else {
-          attrs.write('final ');
+          if (fixed) {
+            attrs.write('final ');
+          }
           attrs.write(getType(v, set, name, tag) + (nullEnable ? '?' : ''));
           attrs.write(" ");
           attrs.write(key.replaceAll('!', ''));
@@ -77,11 +81,26 @@ bool walk(String srcDir, String distDir, String tag) {
         }
         attrs.write("  ");
 
-        if (attrsCon.isNotEmpty) {
-          attrsCon.write(', ');
+        if (fixed) {
+          if (attrsCon.isNotEmpty) {
+            attrsCon.write(', ');
+          } else {
+            attrsCon.write('{');
+          }
+          attrsCon
+              .write((nullEnable ? '' : 'required ') + 'this.' + (key.startsWith("@") ? v : key.replaceAll('!', '')));
+        } else {
+          if (!nullEnable) {
+            if (attrsCon.isNotEmpty) {
+              attrsCon.write(', ');
+            }
+            attrsCon.write('this.' + (key.startsWith("@") ? v : key.replaceAll('!', '')));
+          }
         }
-        attrsCon.write((nullEnable ? '' : 'required ') + 'this.' + (key.startsWith("@") ? v : key.replaceAll('!', '')));
       });
+      if (fixed) {
+        attrsCon.write('}');
+      }
       String className = name[0].toUpperCase() + name.substring(1);
       var dist = format(
           tpl, [name, className, attrs.toString(), className, attrsCon.toString(), className, className, className]);

@@ -4,10 +4,10 @@ part 'card.g.dart';
 
 @JsonSerializable()
 class Card {
-  final String? no;
-  final String name;
+  String? no;
+  String name;
   
-  Card({this.no, required this.name});
+  Card(this.name);
 
   factory Card.fromJson(Map<String,dynamic> json) => _$CardFromJson(json);
 
