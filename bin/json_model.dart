@@ -5,8 +5,9 @@ import 'package:build_runner_core/build_runner_core.dart';
 import 'package:path/path.dart' as path;
 import 'build_runner.dart' as br;
 
+const tplTop = "import 'package:json_annotation/json_annotation.dart';\n%t\npart '%s.g.dart';\n";
 const tpl =
-    "import 'package:json_annotation/json_annotation.dart';\n%t\npart '%s.g.dart';\n\n@JsonSerializable()\nclass %s {\n  %s\n  %s(%s);\n\n  factory %s.fromJson(Map<String,dynamic> json) => _\$%sFromJson(json);\n\n  Map<String, dynamic> toJson() => _\$%sToJson(this);\n}\n";
+    "\n@JsonSerializable()\nclass %s {\n  %s\n  %s(%s);\n\n  factory %s.fromJson(Map<String,dynamic> json) => _\$%sFromJson(json);\n\n  Map<String, dynamic> toJson() => _\$%sToJson(this);\n}\n";
 
 void main(List<String> args) {
   String src;
@@ -52,58 +53,7 @@ bool walk(String srcDir, String distDir, String tag, bool fixed) {
       var map = json.decode(file.readAsStringSync());
       //为了避免重复导入相同的包，我们用Set来保存生成的import语句。
       var set = new Set<String>();
-      StringBuffer attrs = new StringBuffer();
-      StringBuffer attrsCon = new StringBuffer();
-      (map as Map<String, dynamic>).forEach((key, v) {
-        if (key.startsWith("_")) return;
-        bool nullEnable = !key.endsWith('!');
-        if (key.startsWith("@")) {
-          if (key.startsWith("@import")) {
-            set.add(key.substring(1) + " '$v'");
-            return;
-          }
-          int spaceLastIndex = key.lastIndexOf(' ');
-          attrs.write(key.substring(0, spaceLastIndex) +
-              (fixed ? ' final' : '') +
-              key.substring(spaceLastIndex, nullEnable ? key.length : key.length - 1) +
-              (nullEnable ? '?' : ''));
-          attrs.write(" ");
-          attrs.write(v);
-          attrs.writeln(";");
-        } else {
-          if (fixed) {
-            attrs.write('final ');
-          }
-          attrs.write(getType(v, set, name, tag) + (nullEnable ? '?' : ''));
-          attrs.write(" ");
-          attrs.write(key.replaceAll('!', ''));
-          attrs.writeln(";");
-        }
-        attrs.write("  ");
-
-        if (fixed) {
-          if (attrsCon.isNotEmpty) {
-            attrsCon.write(', ');
-          } else {
-            attrsCon.write('{');
-          }
-          attrsCon
-              .write((nullEnable ? '' : 'required ') + 'this.' + (key.startsWith("@") ? v : key.replaceAll('!', '')));
-        } else {
-          if (!nullEnable) {
-            if (attrsCon.isNotEmpty) {
-              attrsCon.write(', ');
-            }
-            attrsCon.write('this.' + (key.startsWith("@") ? v : key.replaceAll('!', '')));
-          }
-        }
-      });
-      if (fixed) {
-        attrsCon.write('}');
-      }
-      String className = name[0].toUpperCase() + name.substring(1);
-      var dist = format(
-          tpl, [name, className, attrs.toString(), className, attrsCon.toString(), className, className, className]);
+      String dist = format(tplTop, [name]) + parseMap(map, set, fixed, name, tag);
       var _import = set.join(";\r\n");
       _import += _import.isEmpty ? "" : ";";
       dist = dist.replaceFirst("%t", _import);
@@ -120,6 +70,83 @@ bool walk(String srcDir, String distDir, String tag, bool fixed) {
     File(path.join(distDir, "index.dart")).writeAsStringSync(indexFile);
   }
   return indexFile.isNotEmpty;
+}
+
+///解析map
+String parseMap(Map<String, dynamic> map, Set<String> set, bool fixed, String name, String tag) {
+  //保存属性
+  StringBuffer attrs = new StringBuffer();
+  //保存构造函数中的属性
+  StringBuffer attrsCon = new StringBuffer();
+  //保存json中内部类
+  List<String> listClass = [];
+  map.forEach((key, v) {
+    if (key.startsWith("_")) return;
+    bool nullEnable = !key.endsWith('!');
+    if (key.startsWith("@")) {
+      if (key.startsWith("@import")) {
+        set.add(key.substring(1) + " '$v'");
+        return;
+      }
+      int spaceLastIndex = key.lastIndexOf(' ');
+      attrs.write(key.substring(0, spaceLastIndex) +
+          (fixed ? ' final' : '') +
+          key.substring(spaceLastIndex, nullEnable ? key.length : key.length - 1) +
+          (nullEnable ? '?' : ''));
+      attrs.write(" ");
+      attrs.write(v);
+      attrs.writeln(";");
+      addAttrsCon(fixed, attrs, attrsCon, nullEnable, key, v);
+    } else {
+      bool isSpecial = checkSpecial(key);
+      var newKey = key.replaceAll('!', '');
+      if (isSpecial) {
+        attrs.write('@JsonKey(name: \'$newKey\') ');
+        newKey = formatKey(newKey);
+      }
+      if (fixed) {
+        attrs.write('final ');
+      }
+      String type = getType(v, set, name, tag);
+      if (type == 'Map<String,dynamic>') {
+        type = newKey[0].toUpperCase() + newKey.substring(1);
+        listClass.add(parseMap(v, set, fixed, newKey, tag));
+      } else if (type == 'List') {
+        type = "List<${newKey[0].toUpperCase() + newKey.substring(1)}>";
+        listClass.add(parseMap(v[0], set, fixed, newKey, tag));
+      }
+      attrs.write(type + (nullEnable ? '?' : ''));
+      attrs.write(" ");
+      attrs.write(newKey);
+      attrs.writeln(";");
+      addAttrsCon(fixed, attrs, attrsCon, nullEnable, newKey, v);
+    }
+    attrs.write("  ");
+  });
+  if (fixed) {
+    attrsCon.write('}');
+  }
+  String className = name[0].toUpperCase() + name.substring(1);
+  return format(tpl, [className, attrs.toString(), className, attrsCon.toString(), className, className, className]) +
+      listClass.join();
+}
+
+addAttrsCon(bool fixed, StringBuffer attrs, StringBuffer attrsCon, bool nullEnable, String key, dynamic v) {
+  if (fixed) {
+    if (attrsCon.isNotEmpty) {
+      attrsCon.write(', ');
+    } else {
+      attrsCon.write('{');
+    }
+    attrsCon.write((nullEnable ? '' : 'required ') + 'this.' + (key.startsWith("@") ? v : key.replaceAll('!', '')));
+  } else {
+    if (!nullEnable) {
+      if (attrsCon.isNotEmpty) {
+        attrsCon.write(', ');
+      }
+      attrsCon.write('this.' + (key.startsWith("@") ? v : key.replaceAll('!', '')));
+    }
+  }
 }
 
 String changeFirstChar(String str, [bool upper = true]) {
@@ -180,4 +207,19 @@ String format(String fmt, List<Object> params) {
   }
 
   return fmt.replaceAllMapped("%s", replace);
+}
+
+final String source = r'[-_]';
+
+///判断是否有特殊符号
+bool checkSpecial(String key) {
+  return RegExp(source).hasMatch(key);
+}
+
+///格式化key，-_等符号一律改为小驼峰
+String formatKey(String key) {
+  RegExp regExp = RegExp(source);
+  String newKey = key.splitMapJoin(regExp,
+      onMatch: (value) => '', onNonMatch: (value) => value[0].toUpperCase() + value.substring(1));
+  return newKey[0].toLowerCase() + newKey.substring(1);
 }

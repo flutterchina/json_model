@@ -3,9 +3,25 @@
   "@JsonKey(ignore: true) Profile": "profile",
   "@JsonKey(name: '+1') int": "loved",
   "name!": "wendux",
-  "father":"$user",
-  "friends":"$[]user",
-  "keywords":"$[]String",
-  "bankCards":"$[]card",
-  "age": 20
+  "father": "$user",
+  "friends": "$[]user",
+  "keywords": "$[]String",
+  "bank_cards": "$[]card",
+  "age": 20,
+  "plan": {
+    "name": "Medium",
+    "space": 400,
+    "private_repos": 20,
+    "collaborators": 0
+  },
+  "project": [
+    {
+      "name": "flutter",
+      "star": 100000
+    },
+    {
+      "name": "kotlin",
+      "star": 100000
+    }
+  ]
 }

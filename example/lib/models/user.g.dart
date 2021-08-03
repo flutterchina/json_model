@@ -19,10 +19,16 @@ User _$UserFromJson(Map<String, dynamic> json) {
         .toList()
     ..keywords =
         (json['keywords'] as List<dynamic>?)?.map((e) => e as String).toList()
-    ..bankCards = (json['bankCards'] as List<dynamic>?)
+    ..bankCards = (json['bank_cards'] as List<dynamic>?)
         ?.map((e) => Card.fromJson(e as Map<String, dynamic>))
         .toList()
-    ..age = json['age'] as num?;
+    ..age = json['age'] as num?
+    ..plan = json['plan'] == null
+        ? null
+        : Plan.fromJson(json['plan'] as Map<String, dynamic>)
+    ..project = (json['project'] as List<dynamic>?)
+        ?.map((e) => Project.fromJson(e as Map<String, dynamic>))
+        .toList();
 }
 
 Map<String, dynamic> _$UserToJson(User instance) => <String, dynamic>{
@@ -31,6 +37,34 @@ Map<String, dynamic> _$UserToJson(User instance) => <String, dynamic>{
       'father': instance.father,
       'friends': instance.friends,
       'keywords': instance.keywords,
-      'bankCards': instance.bankCards,
+      'bank_cards': instance.bankCards,
       'age': instance.age,
+      'plan': instance.plan,
+      'project': instance.project,
+    };
+
+Plan _$PlanFromJson(Map<String, dynamic> json) {
+  return Plan()
+    ..name = json['name'] as String?
+    ..space = json['space'] as num?
+    ..privateRepos = json['private_repos'] as num?
+    ..collaborators = json['collaborators'] as num?;
+}
+
+Map<String, dynamic> _$PlanToJson(Plan instance) => <String, dynamic>{
+      'name': instance.name,
+      'space': instance.space,
+      'private_repos': instance.privateRepos,
+      'collaborators': instance.collaborators,
+    };
+
+Project _$ProjectFromJson(Map<String, dynamic> json) {
+  return Project()
+    ..name = json['name'] as String?
+    ..star = json['star'] as num?;
+}
+
+Map<String, dynamic> _$ProjectToJson(Project instance) => <String, dynamic>{
+      'name': instance.name,
+      'star': instance.star,
     };

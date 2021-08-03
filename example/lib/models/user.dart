@@ -11,12 +11,40 @@ class User {
   User? father;
   List<User>? friends;
   List<String>? keywords;
-  List<Card>? bankCards;
+  @JsonKey(name: 'bank_cards') List<Card>? bankCards;
   num? age;
+  Plan? plan;
+  List<Project>? project;
   
   User(this.name);
 
   factory User.fromJson(Map<String,dynamic> json) => _$UserFromJson(json);
 
   Map<String, dynamic> toJson() => _$UserToJson(this);
+}
+
+@JsonSerializable()
+class Plan {
+  String? name;
+  num? space;
+  @JsonKey(name: 'private_repos') num? privateRepos;
+  num? collaborators;
+  
+  Plan();
+
+  factory Plan.fromJson(Map<String,dynamic> json) => _$PlanFromJson(json);
+
+  Map<String, dynamic> toJson() => _$PlanToJson(this);
+}
+
+@JsonSerializable()
+class Project {
+  String? name;
+  num? star;
+  
+  Project();
+
+  factory Project.fromJson(Map<String,dynamic> json) => _$ProjectFromJson(json);
+
+  Map<String, dynamic> toJson() => _$ProjectToJson(this);
 }
