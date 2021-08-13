@@ -33,7 +33,8 @@ User _$UserFromJson(Map<String, dynamic> json) {
         (json['topics'] as List<dynamic>?)?.map((e) => e as String).toList()
     ..organization = json['organization'] == null
         ? null
-        : Organization.fromJson(json['organization'] as Map<String, dynamic>);
+        : Organization.fromJson(json['organization'] as Map<String, dynamic>)
+    ..assignees = json['assignees'] as List<dynamic>?;
 }
 
 Map<String, dynamic> _$UserToJson(User instance) => <String, dynamic>{
@@ -48,6 +49,7 @@ Map<String, dynamic> _$UserToJson(User instance) => <String, dynamic>{
       'project': instance.project,
       'topics': instance.topics,
       'organization': instance.organization,
+      'assignees': instance.assignees,
     };
 
 Plan _$PlanFromJson(Map<String, dynamic> json) {

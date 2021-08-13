@@ -17,6 +17,7 @@ class User {
   List<Project>? project;
   List<String>? topics;
   Organization? organization;
+  List<dynamic>? assignees;
   
   User(this.name);
 

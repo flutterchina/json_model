@@ -123,7 +123,9 @@ String parseMap(Map<String, dynamic> map, Set<String> set, bool fixed, String na
         }
         listClass.add(parseMap(v, set, fixed, newKey, tag));
       } else if (type == 'List') {
-        if (v[0] is Map) {
+        if ((v as List).isEmpty) {
+          type = "List<dynamic>";
+        } else if (v[0] is Map) {
           var className = newKey[0].toUpperCase() + newKey.substring(1);
           if (allNestedClass.keys.contains(className)) {
             //类名已存在，修改属性类型名
