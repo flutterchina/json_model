@@ -23,5 +23,19 @@
       "name": "kotlin",
       "star": 100000
     }
-  ]
+  ],
+  "topics": [
+    "octocat",
+    "atom",
+    "electron",
+    "api"
+  ],
+  "organization": {
+    "project": [
+      {
+        "name": "json_model",
+        "owe": "xxx"
+      }
+    ]
+  }
 }

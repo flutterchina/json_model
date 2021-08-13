@@ -15,6 +15,8 @@ class User {
   num? age;
   Plan? plan;
   List<Project>? project;
+  List<String>? topics;
+  Organization? organization;
   
   User(this.name);
 
@@ -47,4 +49,27 @@ class Project {
   factory Project.fromJson(Map<String,dynamic> json) => _$ProjectFromJson(json);
 
   Map<String, dynamic> toJson() => _$ProjectToJson(this);
+}
+
+@JsonSerializable()
+class Organization {
+  List<Project1>? project;
+  
+  Organization();
+
+  factory Organization.fromJson(Map<String,dynamic> json) => _$OrganizationFromJson(json);
+
+  Map<String, dynamic> toJson() => _$OrganizationToJson(this);
+}
+
+@JsonSerializable()
+class Project1 {
+  String? name;
+  String? owe;
+  
+  Project1();
+
+  factory Project1.fromJson(Map<String,dynamic> json) => _$Project1FromJson(json);
+
+  Map<String, dynamic> toJson() => _$Project1ToJson(this);
 }

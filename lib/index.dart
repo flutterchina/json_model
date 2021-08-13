@@ -70,13 +70,16 @@ bool walk(String srcDir, String distDir, String tag, bool fixed) {
   return indexFile.isNotEmpty;
 }
 
+///json中所有的嵌套object，防止类名重复
+Map<String, int> allNestedClass = Map();
+
 ///解析map
 String parseMap(Map<String, dynamic> map, Set<String> set, bool fixed, String name, String tag) {
   //保存属性
   StringBuffer attrs = new StringBuffer();
   //保存构造函数中的属性
   StringBuffer attrsCon = new StringBuffer();
-  //保存json中内部类
+  //保存json中的嵌套object
   List<String> listClass = [];
   map.forEach((key, v) {
     if (key.startsWith("_")) return;
@@ -108,10 +111,35 @@ String parseMap(Map<String, dynamic> map, Set<String> set, bool fixed, String na
       String type = getType(v, set, name, tag);
       if (type == 'Map<String,dynamic>') {
         type = newKey[0].toUpperCase() + newKey.substring(1);
+        if (allNestedClass.keys.contains(type)) {
+          //类名已存在，修改属性类型名
+          //重复次数
+          var times = allNestedClass[type];
+          ++times;
+          allNestedClass[type] = times;
+          type += '$times';
+        } else {
+          allNestedClass[type] = 0;
+        }
         listClass.add(parseMap(v, set, fixed, newKey, tag));
       } else if (type == 'List') {
-        type = "List<${newKey[0].toUpperCase() + newKey.substring(1)}>";
-        listClass.add(parseMap(v[0], set, fixed, newKey, tag));
+        if (v[0] is Map) {
+          var className = newKey[0].toUpperCase() + newKey.substring(1);
+          if (allNestedClass.keys.contains(className)) {
+            //类名已存在，修改属性类型名
+            //重复次数
+            var times = allNestedClass[className];
+            ++times;
+            allNestedClass[className] = times;
+            className += '$times';
+          } else {
+            allNestedClass[className] = 0;
+          }
+          type = "List<$className>";
+          listClass.add(parseMap(v[0], set, fixed, newKey, tag));
+        } else {
+          type = "List<${getType(v[0], set, name, tag)}>";
+        }
       }
       attrs.write(type + (nullEnable ? '?' : ''));
       attrs.write(" ");
@@ -125,6 +153,10 @@ String parseMap(Map<String, dynamic> map, Set<String> set, bool fixed, String na
     attrsCon.write('}');
   }
   String className = name[0].toUpperCase() + name.substring(1);
+  if (allNestedClass.keys.contains(className) && allNestedClass[className] > 0) {
+    //修改重复类名
+    className += allNestedClass[className].toString();
+  }
   return format(tpl, [className, attrs.toString(), className, attrsCon.toString(), className, className, className]) +
       listClass.join();
 }
