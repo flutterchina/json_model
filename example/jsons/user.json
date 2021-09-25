@@ -1,11 +1,19 @@
 {
-  "@import": "test_dir/profile.dart",
-  "@JsonKey(ignore: true) Profile": "profile",
-  "@JsonKey(name: '+1') int": "loved",
+  "@meta": {
+    "import": [
+      "test_dir/profile.dart"
+    ],
+    "comments": {
+      "name": "名字"
+    },
+    "nullable": false,
+    "ignore": false
+  },
+  "@JsonKey(ignore: true) Profile?": "profile",
+  "@JsonKey(name: '+1') int?": "loved",
   "name": "wendux",
-  "father":"$user",
-  "friends":"$[]user",
-  "keywords":"$[]String",
-  "bankCards":"$[]card",
-  "age": 20
+  "father": "$user",
+  "friends": "$[]user",
+  "keywords": "$[]String",
+  "age?": 20
 }
