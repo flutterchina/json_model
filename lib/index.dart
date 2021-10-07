@@ -128,6 +128,9 @@ bool generateModelClass(
         key = key.trim();
         if (key.startsWith("_")) return;
         if (key.startsWith("@")) {
+          if (comments[v] != null) {
+            _writeComments(comments[v],fields);
+          }
           fields.write(key);
           fields.write(" ");
           fields.write(v);
@@ -142,9 +145,7 @@ bool generateModelClass(
               !notNull && (optionalField || _nullable);
 
           if (comments[key] != null) {
-            fields.writeln('//${comments[key]}');
-            //indent
-            fields.write("  ");
+            _writeComments(comments[key],fields);
           }
           if (!shouldAppendOptionalFlag) {
             fields.write('late ');
@@ -189,6 +190,14 @@ bool generateModelClass(
     print('create index file: $p');
   }
   return indexFile.isNotEmpty;
+}
+
+_writeComments(dynamic comments,StringBuffer sb){
+  final arr='$comments'.replaceAll('\r', '').split('\n');
+  arr.forEach((element) {
+    sb.writeln('// $element');
+    sb.write('  ');
+  });
 }
 
 String exportIndexFile(String p, String distDir, String indexFile) {

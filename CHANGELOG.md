@@ -1,3 +1,6 @@
+
+## [1.0.0]
+* release version
 ## [1.0.0-beta1]
 
 * first release version
