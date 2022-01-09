@@ -101,7 +101,7 @@ bool generateModelClass(
       //generated class name
       String? className = meta['className'] as String?;
       if (className == null || className.isEmpty) {
-        className = fileName[0].toUpperCase() + fileName.substring(1);
+        className = convName(fileName);
       }
 
       //set ignore
@@ -129,7 +129,7 @@ bool generateModelClass(
         if (key.startsWith("_")) return;
         if (key.startsWith("@")) {
           if (comments[v] != null) {
-            _writeComments(comments[v],fields);
+            _writeComments(comments[v], fields);
           }
           fields.write(key);
           fields.write(" ");
@@ -145,8 +145,13 @@ bool generateModelClass(
               !notNull && (optionalField || _nullable);
 
           if (comments[key] != null) {
-            _writeComments(comments[key],fields);
+            _writeComments(comments[key], fields);
           }
+
+          if (key.contains(RegExp(r'_|\s+'))) {
+            fields.write("@JsonKey(name: '$key') ");
+          }
+
           if (!shouldAppendOptionalFlag) {
             fields.write('late ');
           }
@@ -154,8 +159,8 @@ bool generateModelClass(
           if (shouldAppendOptionalFlag) {
             fields.write('?');
           }
-          fields.write(" ");
-          fields.write(key);
+          fields.write(' ${convName(key, false)}');
+
           //new line
           fields.writeln(";");
         }
@@ -192,8 +197,8 @@ bool generateModelClass(
   return indexFile.isNotEmpty;
 }
 
-_writeComments(dynamic comments,StringBuffer sb){
-  final arr='$comments'.replaceAll('\r', '').split('\n');
+_writeComments(dynamic comments, StringBuffer sb) {
+  final arr = '$comments'.replaceAll('\r', '').split('\n');
   arr.forEach((element) {
     sb.writeln('// $element');
     sb.write('  ');
@@ -215,6 +220,15 @@ bool isBuiltInType(String type) {
   return ['int', 'num', 'string', 'double', 'map', 'list'].contains(type);
 }
 
+String convName(String str, [bool upper = true]) {
+  return (upper ? str[0].toUpperCase() : str[0].toLowerCase()) +
+      str
+          .split(RegExp(r'_|\s+'))
+          .map((e) => e[0].toUpperCase() + e.substring(1))
+          .join()
+          .substring(1);
+}
+
 String getDataType(v, Set<String> set, String current, String tag) {
   current = current.toLowerCase();
   if (v is bool) {
@@ -232,13 +246,13 @@ String getDataType(v, Set<String> set, String current, String tag) {
       if (type.toLowerCase() != current && !isBuiltInType(type)) {
         set.add('import "$type.dart"');
       }
-      return "List<${changeFirstChar(type)}>";
+      return "List<${convName(type)}>";
     } else if (v.startsWith(tag)) {
       final fileName = changeFirstChar(v.substring(1), false);
       if (fileName.toLowerCase() != current) {
         set.add('import "$fileName.dart"');
       }
-      return changeFirstChar(fileName);
+      return convName(fileName);
     } else if (v.startsWith("@")) {
       return v;
     }
